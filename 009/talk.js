@@ -1,6 +1,6 @@
 $(function() {
     $('#yes').click(function(event) {
-        modal('我就知道小宝宝一定会愿意~(^_^)', function() {
+        modal('我就知道宝贝一定会同意~(^_^)', function() {
             $('.page_one').addClass('hide');
             $('.page_two').removeClass('hide');
             // typeWrite();
@@ -22,7 +22,7 @@ function B() {
 }
 
 function C() {
-    modal('请宝宝不要拒绝我嘛~', D);
+    modal('请宝贝不要拒绝我嘛~', D);
 }
 
 function D() {
@@ -38,7 +38,7 @@ function F() {
 }
 
 function G() {
-    modal('房产证上写你的名字', H);
+    modal('根治沃土', H);
 }
 
 function H() {
@@ -54,14 +54,14 @@ function I() {
     modal('会哄你睡觉', J)
 }
 function I() {
-    modal('会唱歌给你听', J)
+    modal('会听你倾述', J)
 }
 function I() {
     modal('爱你。么么哒！', J)
 }
 
 function J() {
-    modal('行，我们去民政局登记吧', function() {
+    modal('行，我们去火鸡面~', function() {
         fireworks();
     });
 }
