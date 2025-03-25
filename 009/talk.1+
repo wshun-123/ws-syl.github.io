@@ -22,7 +22,7 @@ function B() {
 }
 
 function C() {
-    modal('请宝宝不要拒绝我嘛~', D);
+    modal('请宝贝不要拒绝我嘛~', D);
 }
 
 function D() {
