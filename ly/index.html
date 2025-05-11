@@ -1,3 +1,4 @@
+<!--
 <!DOCTYPE html>
 <html>
 <head>
@@ -25,5 +26,99 @@
     </div>
 
     <script src="save.js"></script>
+</body>
+</html>
+-->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GitHub Issues 展示</title>
+    <style>
+        .issue {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .loading { color: #666; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h1>仓库 Issues</h1>
+    <div id="issues-container">
+        <p class="loading">加载中...</p>
+    </div>
+
+    <script>
+        // 配置信息
+        const config = {
+            username: '你的GitHub用户名',
+            repo: '你的仓库名',
+            per_page: 10, // 每页显示数量
+            labels: ''    // 可选：筛选特定标签
+        };
+
+        // 加载 Issues
+        function loadIssues() {
+            const container = document.getElementById('issues-container');
+            
+            fetch(`https://api.github.com/repos/${config.username}/${config.repo}/issues?per_page=${config.per_page}&labels=${config.labels}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(issues => {
+                    if (issues.length === 0) {
+                        container.innerHTML = '<p>暂无 Issues</p>';
+                        return;
+                    }
+                    
+                    let html = '';
+                    issues.forEach(issue => {
+                        // 跳过 pull request
+                        if (issue.pull_request) return;
+                        
+                        html += `
+                            <div class="issue">
+                                <h3><a href="${issue.html_url}" target="_blank">#${issue.number} ${issue.title}</a></h3>
+                                <p>创建于: ${new Date(issue.created_at).toLocaleString()}</p>
+                                <div class="issue-body">${formatIssueBody(issue.body)}</div>
+                                <p>标签: ${issue.labels.map(label => `<span style="background-color:#${label.color};padding:2px 5px;border-radius:3px;color:white;">${label.name}</span>`).join(' ')}</p>
+                            </div>
+                        `;
+                    });
+                    
+                    container.innerHTML = html || '<p>没有找到 Issues</p>';
+                })
+                .catch(error => {
+                    console.error('加载失败:', error);
+                    container.innerHTML = `
+                        <div class="error">
+                            <p>加载 Issues 失败: ${error.message}</p>
+                            ${error.message.includes('rate limit') ? 
+                                '<p>GitHub API 速率限制，请稍后再试或添加认证</p>' : ''}
+                            <button onclick="loadIssues()">重试</button>
+                        </div>
+                    `;
+                });
+        }
+
+        // 格式化 Issue 内容
+        function formatIssueBody(body) {
+            if (!body) return '';
+            return body
+                .replace(/</g, '&lt;').replace(/>/g, '&gt;') // 防止 XSS
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                .replace(/`([^`]+)`/g, '<code>$1</code>')
+                .replace(/\n/g, '<br>');
+        }
+
+        // 页面加载时获取 Issues
+        window.onload = loadIssues;
+    </script>
 </body>
 </html>
